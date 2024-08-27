@@ -1,22 +1,25 @@
 "use client";
 
 import * as z from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { addDays, addMinutes } from "date-fns";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { action } from "@/app/actions";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { Button, Calendar } from "@nextui-org/react";
+import { usePathname, useRouter } from "next/navigation";
+import { DateValue } from "@react-types/calendar";
+import { getLocalTimeZone, today } from "@internationalized/date";
+import { zodResolver } from "@hookform/resolvers/zod";
 
+import { action } from "@/app/actions";
 import {
   appointmentDuration,
   minutesToHours,
   quarterHours,
 } from "@/common/utils";
 import { createAppointment, findPatients, findProfessionals } from "@/services";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
-const inputsSchema = z.object({
+const createAppointmentSchema = z.object({
   date: z.date(),
   time: z.string().min(2),
   duration: z.string().min(2),
@@ -26,20 +29,27 @@ const inputsSchema = z.object({
   professionalId: z.string().min(2, { message: "Required" }),
 });
 
-type TFormInputs = z.infer<typeof inputsSchema>;
+type TAppointmentsInputs = z.infer<typeof createAppointmentSchema>;
 
 export default function CreatAppointment() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [hasError, setHasError] = useState(false);
 
+  const path = usePathname();
+  const { replace } = useRouter();
+
+  function handleDate(date: DateValue) {
+    replace(`${path}?date=${date.toString()}`);
+  }
+
+  // Form
   const {
     register,
     handleSubmit,
     // formState: { errors },
-  } = useForm<TFormInputs>();
-  // } = useForm<TFormInputs>({ resolver: zodResolver(inputsSchema) });
-
-  const queryClient = useQueryClient();
+  } = useForm<TAppointmentsInputs>({
+    resolver: zodResolver(createAppointmentSchema),
+  });
 
   const ownerId = "1e7176fb-81b0-4296-b4bc-8386997bf96e";
 
@@ -63,7 +73,7 @@ export default function CreatAppointment() {
     },
   });
 
-  const onSubmit: SubmitHandler<TFormInputs> = (data) => {
+  const onSubmit: SubmitHandler<TAppointmentsInputs> = (data) => {
     const {
       date,
       time,
@@ -95,22 +105,17 @@ export default function CreatAppointment() {
     mutation.mutate(payload);
   };
 
-  const path = usePathname();
-  const { replace } = useRouter();
-
-  function handleDate() {
-    replace(`${path}?date=2024-08-16`);
-  }
-
   return (
-    <>
-      <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
-        Criar Agendamento
-      </button>
+    <div>
+      <div className="py-6">
+        <Button onClick={() => setIsModalOpen(true)}>Criar Agendamento</Button>
+      </div>
 
-      <button className="btn btn-primary" onClick={handleDate}>
-        Setar data
-      </button>
+      <Calendar
+        aria-label="Date (Controlled)"
+        defaultValue={today(getLocalTimeZone())}
+        onChange={handleDate}
+      />
 
       <div className={`modal ${isModalOpen && "modal-open"}`}>
         <div className="modal-box">
@@ -257,6 +262,6 @@ export default function CreatAppointment() {
           </form>
         </div>
       </div>
-    </>
+    </div>
   );
 }

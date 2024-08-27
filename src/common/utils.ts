@@ -74,7 +74,7 @@ const DEFAULT_TIMEZONE = "America/Sao_Paulo"; // Set your default timezone here
 
 export const formatDateWithTimezone = (
   date: string | Date,
-  dateFormat = "yyyy-MM-dd HH:mm:ss",
+  dateFormat = "yyyy-MM-dd",
   timeZone = DEFAULT_TIMEZONE
 ) => {
   // Convert the date to the desired timezone

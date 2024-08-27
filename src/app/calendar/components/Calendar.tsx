@@ -20,7 +20,7 @@ async function getData(dateQuery: string) {
 export default async function Calendar({
   dateQuery,
 }: {
-  dateQuery: string | null;
+  dateQuery: string | undefined;
 }) {
   const today = formatDateWithTimezone(new Date(), "yyyy-MM-dd");
   const queryDate = dateQuery || today;

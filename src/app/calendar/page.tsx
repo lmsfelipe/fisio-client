@@ -11,11 +11,11 @@ export default async function Home({
   const queryDate = searchParams?.date;
 
   return (
-    <div className="calendar">
+    <div className="calendar flex">
       <CreatAppointment />
 
       <Suspense key={queryDate}>
-        <Calendar dateQuery={queryDate || null} />
+        <Calendar dateQuery={queryDate || undefined} />
       </Suspense>
     </div>
   );
