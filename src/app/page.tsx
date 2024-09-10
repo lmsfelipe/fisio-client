@@ -1,10 +1,21 @@
-import Image from "next/image";
-import Link from "next/link";
+import Calendar from "./components/Calendar";
+import CreatAppointment from "./components/CreateAppointment";
+import { Suspense } from "react";
 
-export default function Home() {
+export default async function Home({
+  searchParams,
+}: {
+  searchParams?: { date?: string };
+}) {
+  const queryDate = searchParams?.date;
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <Link href="/calendar">Calendar</Link>
-    </main>
+    <div className="calendar flex">
+      <CreatAppointment />
+
+      <Suspense key={queryDate}>
+        <Calendar dateQuery={queryDate || undefined} />
+      </Suspense>
+    </div>
   );
 }
