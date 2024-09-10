@@ -33,3 +33,15 @@ export function createAppointment(
     payload
   );
 }
+
+export function editAppointment(
+  payload: TAppointment
+): Promise<{ success: boolean }> {
+  return request(
+    "edit-appointment",
+    {
+      method: "PUT",
+    },
+    payload
+  );
+}
