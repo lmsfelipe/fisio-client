@@ -1,6 +1,6 @@
 // Appointment
 export type TAppointment = {
-  dateStart: Date;
+  dateStart: string;
   dateEnd: Date;
   location: "clinic" | "home";
   patientId: string;

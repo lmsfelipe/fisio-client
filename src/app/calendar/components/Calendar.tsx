@@ -1,13 +1,11 @@
-// "use client";
-
 import { CalendarDaysIcon } from "@heroicons/react/24/solid";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { v4 as uuidv4 } from "uuid";
 
 import { TProfessionalWithAppoitments } from "@/common/types";
 import { AppointmentsColumn } from "./AppointmentsColumn";
 import { formatDateWithTimezone, roundedHours } from "@/common/utils";
 import { findProfessionalsAppointments } from "@/services";
+import { Avatar } from "@nextui-org/react";
 
 async function getData(dateQuery: string) {
   const res = await findProfessionalsAppointments(dateQuery);
@@ -50,8 +48,8 @@ export default async function Calendar({
         {data?.length ? (
           data.map((professional: TProfessionalWithAppoitments) => (
             <div key={professional.id}>
-              <div className="font-black h-8 text-2xl mb-9 text-center">
-                {professional.name}
+              <div className="mb-8 flex justify-center uppercase">
+                <Avatar color="default" name={professional.name} />
               </div>
 
               <AppointmentsColumn appointments={professional.appointments} />

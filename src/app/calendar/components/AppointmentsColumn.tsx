@@ -1,8 +1,11 @@
+"use client";
+
 import { differenceInMinutes } from "date-fns";
 import { useMemo } from "react";
 
 import { TAppointment } from "@/common/types";
 import { formatDateWithTimezone, roundedHours } from "@/common/utils";
+import { parseAsBoolean, parseAsJson, useQueryState } from "nuqs";
 
 function calculateSize(appointment: TAppointment) {
   const sizes: Record<number, string> = {
@@ -27,7 +30,7 @@ function calculateSize(appointment: TAppointment) {
   return sizes[apptDuration] || sizes[1];
 }
 
-function calculatePosition(dateStart: Date) {
+function calculatePosition(dateStart: string) {
   const postions: Record<string, string> = {
     "0": "0",
     "15": "25%",
@@ -66,6 +69,18 @@ export function AppointmentsColumn({
     [appointments]
   );
 
+  const [, setAppointmentQuery] = useQueryState<TAppointment>(
+    "appt",
+    parseAsJson()
+  );
+
+  const [, setApptModalOpen] = useQueryState("appt-modal", parseAsBoolean);
+
+  function handleDate(appt: TAppointment | null) {
+    setAppointmentQuery(appt);
+    setApptModalOpen(true);
+  }
+
   return (
     <div className="appointments-columns">
       {appointmentsMemo.map((appt, index) => (
@@ -74,8 +89,9 @@ export function AppointmentsColumn({
           className="appointments-columns__cell h-20 w-48 border-t border-l-neutral-400 pr-2"
         >
           {appt.data ? (
-            <div
-              className="appointments-columns__card relative w-full z-10"
+            <button
+              onClick={() => handleDate(appt.data)}
+              className="appointments-columns__card relative w-full z-10 cursor-pointer"
               style={{
                 height: calculateSize(appt.data),
                 top: calculatePosition(appt.data.dateStart),
@@ -84,7 +100,7 @@ export function AppointmentsColumn({
               <div className="w-full h-full flex justify-center items-center bg-emerald-200 rounded-2xl p-2 text-slate-950">
                 {appt.data.patientName}
               </div>
-            </div>
+            </button>
           ) : null}
         </div>
       ))}
