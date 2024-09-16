@@ -23,7 +23,7 @@ import {
   minutesToHours,
   quarterHours,
 } from "@/common/utils";
-import { action } from "@/app/actions";
+import { revalidatePathAction } from "@/app/actions";
 import {
   createAppointment,
   editAppointment,
@@ -80,7 +80,9 @@ export default function AppointmentModal() {
     onSuccess: (response) => {
       if (response.success) {
         closeModal();
-        action(`/find-professionals-appointments?date=2024-09-10`);
+        revalidatePathAction(
+          `/find-professionals-appointments?date=2024-09-10`
+        );
       }
     },
   });

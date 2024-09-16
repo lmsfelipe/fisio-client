@@ -26,7 +26,7 @@ export default async function Calendar({
   const data = await getData(queryDate);
 
   return (
-    <div className="inline-flex bg-slate-50 rounded-xl m-6 p-4">
+    <div className="inline-flex bg-slate-50 rounded-3xl m-6 px-14 py-10">
       <div className="mr-4">
         <div className="font-bold h-8 w-6 mb-9 flex items-center">
           <CalendarDaysIcon />
