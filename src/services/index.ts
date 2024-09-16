@@ -25,23 +25,18 @@ export function findProfessionals(id: string): Promise<TProfessional[]> {
 export function createAppointment(
   payload: TAppointment
 ): Promise<{ success: boolean }> {
-  return request(
-    "create-appointment",
-    {
-      method: "POST",
-    },
-    payload
-  );
+  return request("create-appointment", { method: "POST" }, payload);
+}
+
+export function login(payload: {
+  email: string;
+  password: string;
+}): Promise<{ token: string }> {
+  return request("login", { method: "POST" }, payload);
 }
 
 export function editAppointment(
   payload: TAppointment
 ): Promise<{ success: boolean }> {
-  return request(
-    "edit-appointment",
-    {
-      method: "PUT",
-    },
-    payload
-  );
+  return request("edit-appointment", { method: "PUT" }, payload);
 }
