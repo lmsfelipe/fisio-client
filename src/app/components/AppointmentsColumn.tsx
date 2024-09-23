@@ -97,7 +97,7 @@ export function AppointmentsColumn({
                 top: calculatePosition(appt.data.dateStart),
               }}
             >
-              <div className="w-full h-full flex justify-center items-center bg-emerald-200 rounded-2xl p-2 text-slate-950">
+              <div className="w-full h-full flex justify-center items-center bg-primary rounded-2xl p-2 text-slate-950">
                 {appt.data.patientName}
               </div>
             </button>

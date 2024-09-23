@@ -17,9 +17,9 @@
 }
 
 body {
-  height: 100vh;
+  height: 100%;
   color: #333;
-  background: #2c2c2c;
+  background: radial-gradient(circle, #784b75, #90628d, #784b75);
 }
 
 @layer utilities {

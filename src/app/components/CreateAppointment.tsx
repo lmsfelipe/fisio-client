@@ -26,17 +26,35 @@ export default function CreatAppointment() {
 
   return (
     <div>
-      <div className="py-6">
-        <Button onClick={() => setApptModalOpen(true)}>
+      <div className="mt-6">
+        <Calendar
+          aria-label="Date (Controlled)"
+          defaultValue={today(getLocalTimeZone())}
+          onChange={handleDate}
+          classNames={{
+            base: "rounded-3xl bg-opacity-15",
+            headerWrapper: "bg-opacity-5",
+            title: "text-white",
+            nextButton: "text-white",
+            prevButton: "text-white",
+            gridHeader: "bg-opacity-5",
+            gridHeaderCell: "text-white",
+            cellButton: "text-white",
+            // headerWrapper
+          }}
+        />
+      </div>
+
+      <div className="py-6 w-full">
+        <Button
+          onClick={() => setApptModalOpen(true)}
+          size="lg"
+          className="bg-white text-primary"
+          fullWidth
+        >
           Criar Agendamento
         </Button>
       </div>
-
-      <Calendar
-        aria-label="Date (Controlled)"
-        defaultValue={today(getLocalTimeZone())}
-        onChange={handleDate}
-      />
 
       {apptModalOpen && <AppointmentModal />}
     </div>
