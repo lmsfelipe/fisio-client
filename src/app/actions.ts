@@ -8,5 +8,9 @@ export async function revalidatePathAction(path: string) {
 }
 
 export async function setCookieAction(key: string, value: string) {
-  cookies().set(key, value);
+  return cookies().set(key, value);
+}
+
+export async function getCookieAction(key: string) {
+  return cookies().get(key);
 }

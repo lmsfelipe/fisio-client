@@ -1,3 +1,17 @@
+export type TUser = {
+  id?: string;
+  name: string;
+  email: string;
+  password: string;
+  birthday: Date;
+  cpf: string;
+  gender: "male" | "female" | "other";
+  phone: string;
+  photo?: File;
+  userType?: "patient" | "professional" | "owner";
+  permission?: "view" | "edit" | "full";
+};
+
 // Appointment
 export type TAppointment = {
   dateStart: string;
