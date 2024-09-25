@@ -43,6 +43,11 @@ function calculatePosition(dateStart: string) {
   return postions[minutes] || postions[0];
 }
 
+function appointmentTime(appt: TAppointment) {
+  return `${formatDateWithTimezone(appt.dateStart, "hh:mm")} -
+${formatDateWithTimezone(appt.dateEnd, "hh:mm")}`;
+}
+
 export function AppointmentsColumn({
   appointments,
 }: {
@@ -86,7 +91,7 @@ export function AppointmentsColumn({
       {appointmentsMemo.map((appt, index) => (
         <div
           key={`${appt.hour}-${index}`}
-          className="appointments-columns__cell h-20 w-48 border-t border-l-neutral-400 pr-2"
+          className="appointments-columns__cell h-32 w-48 border-t border-l-neutral-400 pr-2"
         >
           {appt.data ? (
             <button
@@ -97,8 +102,14 @@ export function AppointmentsColumn({
                 top: calculatePosition(appt.data.dateStart),
               }}
             >
-              <div className="w-full h-full flex justify-center items-center bg-primary rounded-2xl p-2 text-slate-950">
-                {appt.data.patientName}
+              <div className="w-full h-full bg-orange-100 border border-orange-300 text-left rounded-2xl px-3 py-2 text-slate-950">
+                <div className="text-sm text-yellow-900 font-bold">
+                  {appt.data.patientName} & {appt.data.professionalName}
+                </div>
+
+                <div className="text-sm text-yellow-700">
+                  {appointmentTime(appt.data)}
+                </div>
               </div>
             </button>
           ) : null}

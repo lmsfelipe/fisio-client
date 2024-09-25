@@ -115,7 +115,7 @@ export default function AppointmentModal() {
     register,
     handleSubmit,
     control,
-    formState: { errors }, // TODO: validade errors
+    // formState: { errors }, TODO: validade errors
   } = useForm<TAppointmentsInputs>({
     resolver: zodResolver(createAppointmentSchema),
     defaultValues,
@@ -156,6 +156,8 @@ export default function AppointmentModal() {
   };
 
   if (!professionals?.length || !patients?.length) return null;
+
+  console.log("Modal Opened!");
 
   return (
     <div className={`modal modal-open`}>
@@ -221,7 +223,7 @@ export default function AppointmentModal() {
                 validationBehavior="native"
                 {...register("time")}
               >
-                {quarterHours.map((hour, index) => (
+                {quarterHours.map((hour) => (
                   <AutocompleteItem value={hour} key={hour}>
                     {hour}
                   </AutocompleteItem>
@@ -236,7 +238,7 @@ export default function AppointmentModal() {
                 className="max-w-xs"
                 {...register("duration")}
               >
-                {appointmentDuration.map((duration, index) => (
+                {appointmentDuration.map((duration) => (
                   <SelectItem key={duration.toString()}>
                     {minutesToHours(duration)}
                   </SelectItem>

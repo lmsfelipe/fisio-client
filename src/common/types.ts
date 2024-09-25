@@ -15,7 +15,7 @@ export type TUser = {
 // Appointment
 export type TAppointment = {
   dateStart: string;
-  dateEnd: Date;
+  dateEnd: string;
   location: "clinic" | "home";
   patientId: string;
   professionalId: string;

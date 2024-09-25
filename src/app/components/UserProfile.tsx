@@ -3,7 +3,6 @@ import { User } from "@nextui-org/react";
 
 async function getData() {
   const res = await findUser();
-  console.log("res", res);
 
   if (!res?.id) throw new Error("Owner not found");
 

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { Button, Calendar } from "@nextui-org/react";
 import { DateValue } from "@react-types/calendar";
 import { usePathname, useRouter } from "next/navigation";
@@ -10,8 +9,6 @@ import { parseAsBoolean, useQueryState } from "nuqs";
 import AppointmentModal from "./AppointmentModal";
 
 export default function CreatAppointment() {
-  const [hasError, setHasError] = useState(false);
-
   const path = usePathname();
   const { replace } = useRouter();
 
@@ -23,6 +20,8 @@ export default function CreatAppointment() {
     "appt-modal",
     parseAsBoolean
   );
+
+  console.log("apptModalOpen", apptModalOpen);
 
   return (
     <div>

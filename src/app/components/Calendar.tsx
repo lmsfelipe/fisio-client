@@ -35,7 +35,7 @@ export default async function Calendar({
         {roundedHours.map((hour) => (
           <div
             key={uuidv4()}
-            className="text-sm text-slate-800 h-20 w-5 relative"
+            className="text-sm text-slate-800 h-28 w-5 relative"
           >
             <div className="clalendar-hour absolute" style={{ bottom: "90%" }}>
               {hour.split(":")[0]}h
