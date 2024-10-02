@@ -30,7 +30,7 @@ import {
   findPatients,
   findProfessionals,
 } from "@/services";
-import { TAppointmentResponse } from "@/common/types";
+import { TAppointmentQuery } from "@/common/types";
 
 const createAppointmentSchema = z.object({
   dateStart: z.any(),
@@ -51,7 +51,7 @@ export default function AppointmentModal() {
    * Route query
    */
   const [appointmentQuery, setAppointmentQuery] =
-    useQueryState<TAppointmentResponse>("appt", parseAsJson());
+    useQueryState<TAppointmentQuery>("appt", parseAsJson());
 
   const [, setApptModalOpen] = useQueryState("appt-modal", parseAsBoolean);
 
@@ -76,7 +76,7 @@ export default function AppointmentModal() {
   });
 
   const appointmentMutation = useMutation({
-    mutationFn: appointmentQuery ? editAppointment : createAppointment,
+    mutationFn: appointmentQuery?.isEdit ? editAppointment : createAppointment,
     onSuccess: (response) => {
       if (response.success) {
         closeModal();
@@ -92,8 +92,8 @@ export default function AppointmentModal() {
    */
   const defaultValues = {
     ...appointmentQuery,
-    dateStart: today(getLocalTimeZone()),
-    ...(appointmentQuery
+    dateStart: today(getLocalTimeZone()), // TODO: Create function for get  today
+    ...(appointmentQuery?.dateStart
       ? {
           time: formatDateWithTimezone(appointmentQuery.dateStart, "HH:mm"),
           duration: differenceInMinutes(
@@ -143,7 +143,7 @@ export default function AppointmentModal() {
     const dateEnd = addMinutes(convertedDate, parseInt(duration, 10));
 
     const payload = {
-      ...(appointmentQuery ? { id: appointmentQuery.id } : {}),
+      ...(appointmentQuery?.isEdit ? { id: appointmentQuery.id } : {}),
       dateStart: convertedDate,
       dateEnd,
       location,
@@ -312,7 +312,7 @@ export default function AppointmentModal() {
             </div>
 
             <button type="submit" className="btn btn-primary mt-2">
-              {appointmentQuery ? "Editar" : "Criar"}
+              {appointmentQuery?.isEdit ? "Editar" : "Criar"}
             </button>
           </div>
         </form>
