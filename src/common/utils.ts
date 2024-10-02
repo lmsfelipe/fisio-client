@@ -1,5 +1,6 @@
 import { format } from "date-fns/format";
 import { toZonedTime } from "date-fns-tz";
+import { ptBR } from "date-fns/locale";
 
 export const roundedHours = [
   "07:00",
@@ -81,7 +82,7 @@ export const formatDateWithTimezone = (
   const zonedDate = toZonedTime(date, timeZone);
 
   // Format the zoned date
-  return format(zonedDate, dateFormat);
+  return format(zonedDate, dateFormat, { locale: ptBR });
 };
 
 export const appointmentDuration = [

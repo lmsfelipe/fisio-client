@@ -24,12 +24,21 @@ export type TAppointment = {
   observation: string;
 };
 
+export type TSmallAppt = {
+  dateStart: string;
+  professionalId: string;
+};
+
 export interface TAppointmentResponse extends TAppointment {
   id: number;
   createdAt: Date;
   updatedAt: Date;
   professionalId: string;
   patientId: string;
+}
+
+export interface TAppointmentQuery extends TAppointmentResponse {
+  isEdit: boolean;
 }
 
 // Patient
