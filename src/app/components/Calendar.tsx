@@ -6,6 +6,7 @@ import { AppointmentsColumn } from "./AppointmentsColumn";
 import { formatDateWithTimezone, roundedHours } from "@/common/utils";
 import { findProfessionalsAppointments } from "@/services";
 import { Avatar } from "@nextui-org/react";
+import { getHours, getMinutes } from "date-fns";
 
 async function getData(dateQuery: string) {
   const res = await findProfessionalsAppointments(dateQuery);
@@ -25,8 +26,12 @@ export default async function Calendar({
 
   const data = await getData(queryDate);
 
+  const now = new Date();
+  const currentTime = getHours(now) * 60 + getMinutes(now) - 420;
+  const calculatePercentage = (currentTime * 100) / 780;
+
   return (
-    <div className="m-6">
+    <div className="m-4 w-11/12 overflow-x-auto">
       <div className="text-3xl text-white font-extrabold capitalize mb-4">
         {formatDateWithTimezone(queryDate, "EEEE, d 'de' MMMM")}
       </div>
@@ -37,19 +42,28 @@ export default async function Calendar({
             <CalendarDaysIcon />
           </div>
 
-          {roundedHours.map((hour) => (
+          <div className="relative">
             <div
-              key={uuidv4()}
-              className="text-sm text-slate-800 h-32 w-5 relative"
-            >
+              className="absolute w-screen h-px bg-pink-200 mt-1 z-50 left-10"
+              style={{
+                top: `${calculatePercentage > 100 ? 0 : calculatePercentage}%`,
+              }}
+            />
+
+            {roundedHours.map((hour) => (
               <div
-                className="clalendar-hour absolute"
-                style={{ bottom: "90%" }}
+                key={uuidv4()}
+                className="text-sm text-slate-800 h-32 w-5 relative"
               >
-                {hour.split(":")[0]}h
+                <div
+                  className="clalendar-hour absolute"
+                  style={{ bottom: "90%" }}
+                >
+                  {hour.split(":")[0]}h
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         <div className="flex justify-between">
