@@ -12,7 +12,7 @@ export default async function Home({
 
   return (
     <div className="calendar flex">
-      <div className="m-6">
+      <div className="m-4">
         <UserProfile />
         <CreatAppointment />
       </div>

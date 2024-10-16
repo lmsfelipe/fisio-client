@@ -63,7 +63,7 @@ export default function AppointmentModal() {
   /**
    * API request
    */
-  const ownerId = "1e7176fb-81b0-4296-b4bc-8386997bf96e"; // TODO: get it form service
+  const ownerId = "e30c0aac-9321-448f-80c3-e246d64aaab3"; // TODO: get it form service
 
   const { data: patients } = useQuery({
     queryKey: ["patients", ownerId],
@@ -155,9 +155,8 @@ export default function AppointmentModal() {
     appointmentMutation.mutate(payload);
   };
 
-  if (!professionals?.length || !patients?.length) return null;
-
-  console.log("Modal Opened!");
+  if (!professionals?.length || !patients?.length)
+    return <h1>Data não carregada</h1>;
 
   return (
     <div className={`modal modal-open`}>
