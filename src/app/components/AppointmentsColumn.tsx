@@ -1,60 +1,24 @@
 "use client";
 
-import { differenceInMinutes, isAfter, parse } from "date-fns";
+import { isAfter, parse } from "date-fns";
 import { useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { parseAsBoolean, parseAsJson, useQueryState } from "nuqs";
 import { getLocalTimeZone, today } from "@internationalized/date";
 
-import { TAppointment, TAppointmentQuery, TSmallAppt } from "@/common/types";
+import {
+  TAppointmentQuery,
+  TAppointmentResponse,
+  TSmallAppt,
+} from "@/common/types";
 import { formatDateWithTimezone, roundedHours } from "@/common/utils";
-
-function calculateSize(appointment: TAppointment) {
-  const sizes: Record<number, string> = {
-    30: "50%",
-    45: "75%",
-    60: "100%",
-    75: "125%",
-    90: "150%",
-    105: "175%",
-    120: "200%",
-    135: "225%",
-    150: "250%",
-    165: "275%",
-    180: "300%",
-  };
-
-  const apptDuration = differenceInMinutes(
-    appointment.dateEnd,
-    appointment.dateStart
-  );
-
-  return sizes[apptDuration] || sizes[1];
-}
-
-function calculatePosition(dateStart: string) {
-  const postions: Record<string, string> = {
-    "0": "0",
-    "15": "25%",
-    "30": "50%",
-    "45": "75%",
-  };
-
-  const minutes = formatDateWithTimezone(dateStart, "mm");
-
-  return postions[minutes] || postions[0];
-}
-
-function appointmentTime(appt: TAppointment) {
-  return `${formatDateWithTimezone(appt.dateStart, "hh:mm")} -
-${formatDateWithTimezone(appt.dateEnd, "hh:mm")}`;
-}
+import AppointmentCard from "./AppointmentCard";
 
 export function AppointmentsColumn({
   appointments,
   professionalId,
 }: {
-  appointments: TAppointment[];
+  appointments: TAppointmentResponse[];
   professionalId: string;
 }) {
   const [, setAppointmentQuery] = useQueryState<TAppointmentQuery | TSmallAppt>(
@@ -67,12 +31,6 @@ export function AppointmentsColumn({
 
   const queryDate = search.get("date");
   const isAfterToday = queryDate ? isAfter(queryDate, new Date()) : false;
-
-  function handleEditAppt(appt: TAppointment | null) {
-    const query = { ...appt, isEdit: true } as TAppointmentQuery;
-    setAppointmentQuery(query);
-    setApptModalOpen(true);
-  }
 
   function handleCreateAppointment(data: { hour: string }) {
     const date = queryDate || today(getLocalTimeZone());
@@ -89,8 +47,8 @@ export function AppointmentsColumn({
     setApptModalOpen(true);
   }
 
-  const filteredAppointments = (appts: TAppointment[]) =>
-    roundedHours.reduce<{ hour: string; data: TAppointment[] | [] }[]>(
+  const filteredAppointments = (appts: TAppointmentResponse[]) =>
+    roundedHours.reduce<{ hour: string; data: TAppointmentResponse[] | [] }[]>(
       (acc, curr) => {
         const foundAppt = appts.filter(
           (appt) =>
@@ -126,31 +84,14 @@ export function AppointmentsColumn({
 
           {appt.data.length
             ? appt.data.map((item) => (
-                <button
-                  key={item.patientId}
-                  onClick={() => handleEditAppt(item)}
-                  className="appointments-columns__card absolute w-full z-10 cursor-pointer overflow-hidden"
-                  style={{
-                    height: calculateSize(item),
-                    top: calculatePosition(item.dateStart),
+                <AppointmentCard
+                  key={item.patientName}
+                  appointment={item}
+                  querySetters={{
+                    setAppointmentQuery: setAppointmentQuery,
+                    setApptModalOpen: setApptModalOpen,
                   }}
-                >
-                  <div className="w-full h-full bg-green-100 border border-green-300 text-left rounded-2xl px-3 py-2 text-slate-950">
-                    <div className="text-sm text-green-900 font-bold">
-                      {item.patientName} & {item.professionalName}
-                    </div>
-
-                    <div className="text-xs text-green-700">
-                      {appointmentTime(item)}
-                    </div>
-
-                    {item.observation ? (
-                      <div className="text-xs text-green-900 mt-1">
-                        {item.observation}
-                      </div>
-                    ) : null}
-                  </div>
-                </button>
+                />
               ))
             : null}
         </div>
