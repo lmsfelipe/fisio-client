@@ -1,4 +1,5 @@
 import {
+  StatusEnum,
   TAppointment,
   TPatient,
   TProfessional,
@@ -29,8 +30,25 @@ export function findProfessionals(id: string): Promise<TProfessional[]> {
 
 export function createAppointment(
   payload: TAppointment
-): Promise<{ success: boolean }> {
+): Promise<{ success: boolean; data: TAppointment }> {
   return request("create-appointment", { method: "POST" }, payload);
+}
+
+export function editAppointment(
+  payload: TAppointment
+): Promise<{ success: boolean; data: TAppointment }> {
+  return request("edit-appointment", { method: "PUT" }, payload);
+}
+
+export function deleteAppointment(id: number): Promise<{ success: boolean }> {
+  return request("delete-appointment", { method: "DELETE" }, id);
+}
+
+export function editAppointmentStatus(payload: {
+  id: number;
+  status: StatusEnum;
+}): Promise<{ success: boolean }> {
+  return request("edit-status-appointment", { method: "PUT" }, payload);
 }
 
 export function login(payload: {
@@ -38,10 +56,4 @@ export function login(payload: {
   password: string;
 }): Promise<{ token: string }> {
   return request("login", { method: "POST" }, payload);
-}
-
-export function editAppointment(
-  payload: TAppointment
-): Promise<{ success: boolean }> {
-  return request("edit-appointment", { method: "PUT" }, payload);
 }

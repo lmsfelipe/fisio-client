@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 export type TUser = {
   id?: string;
   name: string;
@@ -13,6 +14,12 @@ export type TUser = {
 };
 
 // Appointment
+export enum StatusEnum {
+  OPENED = "opened",
+  CLOSED = "closed",
+  MISSED = "missed",
+}
+
 export type TAppointment = {
   dateStart: string;
   dateEnd: string;
@@ -22,6 +29,7 @@ export type TAppointment = {
   patientName?: string;
   professionalName?: string;
   observation: string;
+  status?: StatusEnum; // TODO: It should be required
 };
 
 export type TSmallAppt = {

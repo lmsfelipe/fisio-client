@@ -4,11 +4,17 @@ import { differenceInMinutes } from "date-fns";
 import {
   CheckCircleIcon,
   XCircleIcon,
-  ArchiveBoxXMarkIcon,
+  TrashIcon,
 } from "@heroicons/react/24/outline";
-import { TAppointmentQuery, TAppointmentResponse } from "@/common/types";
+import {
+  StatusEnum,
+  TAppointmentQuery,
+  TAppointmentResponse,
+} from "@/common/types";
 import { formatDateWithTimezone } from "@/common/utils";
 import { Tooltip } from "@nextui-org/react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { deleteAppointment, editAppointmentStatus } from "@/services";
 
 function calculateSize(appointment: TAppointmentResponse) {
   const sizes: Record<number, string> = {
@@ -61,12 +67,60 @@ type TProps = {
   };
 };
 
+const statusColors = {
+  opened: {
+    background: "bg-orange-100 border-orange-300",
+    textStrong: "text-orange-900",
+    textThin: "text-orange-700",
+  },
+  closed: {
+    background: "bg-green-100 border-green-300",
+    textStrong: "text-green-900",
+    textThin: "text-green-700",
+  },
+  missed: {
+    background: "bg-red-100 border-red-300",
+    textStrong: "text-red-900",
+    textThin: "text-red-700",
+  },
+};
+
 export default function AppointmentCard({ appointment, querySetters }: TProps) {
+  const queryClient = useQueryClient();
+
+  const appointmentStatusMutation = useMutation({
+    mutationFn: editAppointmentStatus,
+    onSuccess: (response) => {
+      if (response.success) {
+        queryClient.invalidateQueries({ queryKey: ["appointmentsData"] });
+      }
+    },
+  });
+
+  const appointmentDeletionMutation = useMutation({
+    mutationFn: deleteAppointment,
+    onSuccess: (response) => {
+      if (response.success) {
+        queryClient.invalidateQueries({ queryKey: ["appointmentsData"] });
+      }
+    },
+  });
+
   function handleEditAppt(appt: TAppointmentResponse | null) {
     const query = { ...appt, isEdit: true } as TAppointmentQuery;
     querySetters.setAppointmentQuery(query);
     querySetters.setApptModalOpen(true);
   }
+
+  function handleChangingStatus(status: StatusEnum) {
+    appointmentStatusMutation.mutate({ id: appointment.id, status });
+  }
+
+  function handleDelete() {
+    appointmentDeletionMutation.mutate(appointment.id);
+  }
+
+  const currentStatus = appointment.status || "opened";
 
   return (
     <Tooltip
@@ -76,15 +130,24 @@ export default function AppointmentCard({ appointment, querySetters }: TProps) {
       classNames={{ content: "py-2 px-3" }}
       content={
         <div className="flex gap-x-2">
-          <button className="h-5 w-5 hover:scale-110 transition-all">
-            <ArchiveBoxXMarkIcon className="stroke-red-800" />
+          <button
+            className="h-5 w-5 hover:scale-125 transition-all"
+            onClick={() => handleDelete()}
+          >
+            <TrashIcon className="stroke-red-800" />
           </button>
 
-          <button className="h-5 w-5 hover:scale-110 transition-all">
+          <button
+            className="h-5 w-5 hover:scale-125 transition-all"
+            onClick={() => handleChangingStatus(StatusEnum.MISSED)}
+          >
             <XCircleIcon className="stroke-amber-600" />
           </button>
 
-          <button className="h-5 w-5 hover:scale-110 transition-all">
+          <button
+            className="h-5 w-5 hover:scale-125 transition-all"
+            onClick={() => handleChangingStatus(StatusEnum.CLOSED)}
+          >
             <CheckCircleIcon className="stroke-green-800" />
           </button>
         </div>
@@ -99,17 +162,23 @@ export default function AppointmentCard({ appointment, querySetters }: TProps) {
           top: calculatePosition(appointment.dateStart),
         }}
       >
-        <div className="w-full h-full bg-green-100 border border-green-300 text-left rounded-2xl px-3 py-2 text-slate-950">
-          <div className="text-sm text-green-900 font-bold">
+        <div
+          className={`${statusColors[currentStatus].background} w-full h-full border text-left rounded-2xl px-3 py-2 text-slate-950`}
+        >
+          <div
+            className={`${statusColors[currentStatus].textStrong} text-sm font-bold`}
+          >
             {appointment.patientName} & {appointment.professionalName}
           </div>
 
-          <div className="text-xs text-green-700">
+          <div className={`${statusColors[currentStatus].textThin} text-xs`}>
             {appointmentTime(appointment)}
           </div>
 
           {appointment.observation ? (
-            <div className="text-xs text-green-900 mt-1">
+            <div
+              className={`${statusColors[currentStatus].textStrong} text-xs mt-1`}
+            >
               {appointment.observation}
             </div>
           ) : null}
