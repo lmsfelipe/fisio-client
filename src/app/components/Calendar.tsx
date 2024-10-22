@@ -1,3 +1,5 @@
+"use client";
+
 import { CalendarDaysIcon } from "@heroicons/react/24/solid";
 import { v4 as uuidv4 } from "uuid";
 
@@ -7,16 +9,17 @@ import { formatDateWithTimezone, roundedHours } from "@/common/utils";
 import { findProfessionalsAppointments } from "@/services";
 import { Avatar } from "@nextui-org/react";
 import { getHours, getMinutes } from "date-fns";
+import { useQuery } from "@tanstack/react-query";
 
-async function getData(dateQuery: string) {
-  const res = await findProfessionalsAppointments(dateQuery);
+// async function getData(dateQuery: string) {
+//   const res = await findProfessionalsAppointments(dateQuery);
 
-  if (!res?.length) throw new Error("Owner not found");
+//   if (!res?.length) throw new Error("Owner not found");
 
-  return res;
-}
+//   return res;
+// }
 
-export default async function Calendar({
+export default function Calendar({
   dateQuery,
 }: {
   dateQuery: string | undefined;
@@ -24,7 +27,12 @@ export default async function Calendar({
   const today = formatDateWithTimezone(new Date(), "yyyy-MM-dd");
   const queryDate = dateQuery || today;
 
-  const data = await getData(queryDate);
+  // const data = await getData(queryDate);
+
+  const { data: appointmentsData } = useQuery({
+    queryKey: ["appointmentsData", queryDate],
+    queryFn: () => findProfessionalsAppointments(queryDate),
+  });
 
   const now = new Date();
   const currentTime = getHours(now) * 60 + getMinutes(now) - 420;
@@ -67,19 +75,21 @@ export default async function Calendar({
         </div>
 
         <div className="flex justify-between">
-          {data?.length ? (
-            data.map((professional: TProfessionalWithAppoitments) => (
-              <div key={professional.id}>
-                <div className="mb-8 flex justify-center uppercase">
-                  <Avatar color="default" name={professional.name} />
-                </div>
+          {appointmentsData?.length ? (
+            appointmentsData.map(
+              (professional: TProfessionalWithAppoitments) => (
+                <div key={professional.id}>
+                  <div className="mb-8 flex justify-center uppercase">
+                    <Avatar color="default" name={professional.name} />
+                  </div>
 
-                <AppointmentsColumn
-                  appointments={professional.appointments}
-                  professionalId={professional.id}
-                />
-              </div>
-            ))
+                  <AppointmentsColumn
+                    appointments={professional.appointments}
+                    professionalId={professional.id}
+                  />
+                </div>
+              )
+            )
           ) : (
             <div>Carregando...</div>
           )}
