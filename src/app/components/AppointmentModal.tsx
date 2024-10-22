@@ -4,7 +4,7 @@ import * as z from "zod";
 import { addMinutes, differenceInMinutes } from "date-fns";
 import { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { parseAsBoolean, parseAsJson, useQueryState } from "nuqs";
 import { getLocalTimeZone, parseDate, today } from "@internationalized/date";
@@ -23,7 +23,6 @@ import {
   minutesToHours,
   quarterHours,
 } from "@/common/utils";
-import { revalidatePathAction } from "@/app/actions";
 import {
   createAppointment,
   editAppointment,
@@ -44,8 +43,12 @@ const createAppointmentSchema = z.object({
 
 type TAppointmentsInputs = z.infer<typeof createAppointmentSchema>;
 
+/**
+ * Component initiation
+ */
 export default function AppointmentModal() {
   const [hasError, setHasError] = useState(false);
+  const queryClient = useQueryClient();
 
   /**
    * Route query
@@ -79,10 +82,8 @@ export default function AppointmentModal() {
     mutationFn: appointmentQuery?.isEdit ? editAppointment : createAppointment,
     onSuccess: (response) => {
       if (response.success) {
+        queryClient.invalidateQueries({ queryKey: ["appointmentsData"] });
         closeModal();
-        revalidatePathAction(
-          `/find-professionals-appointments?date=2024-09-10`
-        );
       }
     },
   });
