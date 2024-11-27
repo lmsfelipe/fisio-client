@@ -10,14 +10,14 @@ import {
 } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import { z } from "zod";
-import { PatternFormat } from "react-number-format";
 import { parse } from "date-fns";
-import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { createPatient } from "@/services";
 import { GenderEnum, IAddress, TPatient } from "@/common/types";
 import { getCookieAction } from "../actions";
+import { InputNumberMask } from "../components/InputNumberMask";
 
 export const addressSchema = z.object({
   street: z.string().min(5),
@@ -69,7 +69,6 @@ export default function CreatePatient() {
     },
   });
 
-  console.log("errors", errors);
   const clearNonNumeric = (str: string) => str.replace(/\D/g, "");
 
   const onSubmit: SubmitHandler<TCreatePatientInputs> = async (data) => {
@@ -135,37 +134,22 @@ export default function CreatePatient() {
               {...register("email")}
             />
 
-            {/* TODO: componentize this */}
-            <Controller
-              name="birthday"
+            <InputNumberMask
               control={control}
-              render={({ field: { ref, ...rest } }) => (
-                <PatternFormat
-                  isInvalid={!!errors.birthday}
-                  format="##/##/####"
-                  customInput={Input}
-                  getInputRef={ref}
-                  label="Data de nascimento"
-                  {...rest}
-                />
-              )}
+              hasError={!!errors.birthday}
+              inputName="birthday"
+              label="Data de nascimento"
+              mask="##/##/####"
             />
           </div>
 
           <div className={rowClasses}>
-            <Controller
-              name="cpf"
+            <InputNumberMask
               control={control}
-              render={({ field: { ref, ...rest } }) => (
-                <PatternFormat
-                  isInvalid={!!errors.cpf}
-                  format="###.###.###-##"
-                  customInput={Input}
-                  getInputRef={ref}
-                  label="CPF"
-                  {...rest}
-                />
-              )}
+              hasError={!!errors.cpf}
+              inputName="cpf"
+              label="CPF"
+              mask="###.###.###-##"
             />
 
             <Select
@@ -177,19 +161,12 @@ export default function CreatePatient() {
               <SelectItem key="female">Feminino</SelectItem>
             </Select>
 
-            <Controller
-              name="phone"
+            <InputNumberMask
               control={control}
-              render={({ field: { ref, ...rest } }) => (
-                <PatternFormat
-                  isInvalid={!!errors.phone}
-                  format="(##) #####-####"
-                  customInput={Input}
-                  getInputRef={ref}
-                  label="Telefone"
-                  {...rest}
-                />
-              )}
+              hasError={!!errors.phone}
+              inputName="phone"
+              label="Telefone"
+              mask="(##) #####-####"
             />
           </div>
 
@@ -253,19 +230,12 @@ export default function CreatePatient() {
               {...register("address.state")}
             />
 
-            <Controller
-              name="address.zipCode"
+            <InputNumberMask
               control={control}
-              render={({ field: { ref, ...rest } }) => (
-                <PatternFormat
-                  isInvalid={!!errors.address?.zipCode}
-                  format="#####-###"
-                  customInput={Input}
-                  getInputRef={ref}
-                  label="CEP"
-                  {...rest}
-                />
-              )}
+              hasError={!!errors.address?.zipCode}
+              inputName="address.zipCode"
+              label="CEP"
+              mask="#####-###"
             />
           </div>
 

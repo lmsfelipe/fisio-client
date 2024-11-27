@@ -7,6 +7,7 @@ import { getLocalTimeZone, parseDate, today } from "@internationalized/date";
 import { parseAsBoolean, parseAsString, useQueryState } from "nuqs";
 
 import AppointmentModal from "./AppointmentModal";
+import Link from "next/link";
 
 export default function CreatAppointment() {
   const path = usePathname();
@@ -53,6 +54,13 @@ export default function CreatAppointment() {
         >
           Criar Agendamento
         </Button>
+
+        <Link
+          className="text-white block w-full text-center mt-4"
+          href="/cadastrar-paciente"
+        >
+          Cadastrar paciente
+        </Link>
       </div>
 
       {apptModalOpen && <AppointmentModal />}

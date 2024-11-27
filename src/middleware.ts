@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 
-const protectedRoutes = ["/", "/criar-paciente"];
+const protectedRoutes = ["/", "/cadastrar-paciente"];
 const publicRoutes = ["/login", "/signup"];
 
 export default async function middleware(req: NextRequest) {
