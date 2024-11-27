@@ -1,4 +1,22 @@
 /* eslint-disable no-unused-vars */
+export enum UserTypeEnum {
+  PATIENT = "patient",
+  PROFESSIONAL = "professional",
+  OWNER = "owner",
+}
+
+export enum GenderEnum {
+  MALE = "male",
+  FEMALE = "female",
+  OTHER = "other",
+}
+
+export enum PermissionEnum {
+  VIEW = "view",
+  EDIT = "edit",
+  FULL = "full",
+}
+
 export type TUser = {
   id?: string;
   name: string;
@@ -6,12 +24,22 @@ export type TUser = {
   password: string;
   birthday: Date;
   cpf: string;
-  gender: "male" | "female" | "other";
+  gender: GenderEnum;
   phone: string;
   photo?: File;
-  userType?: "patient" | "professional" | "owner";
-  permission?: "view" | "edit" | "full";
+  userType?: UserTypeEnum;
+  permission?: PermissionEnum;
 };
+
+// Address
+export interface IAddress {
+  street: string;
+  number: string;
+  neighborhood: string;
+  city: string;
+  state: string;
+  zipCode: string;
+}
 
 // Appointment
 export enum StatusEnum {
@@ -51,15 +79,22 @@ export interface TAppointmentQuery extends TAppointmentResponse {
 
 // Patient
 export type TPatient = {
-  id: string;
-  ownerId: string;
+  ownerId?: string;
   name: string;
   motherName: string;
-  fatherName: string;
+  fatherName?: string;
   diagnosis: string;
+};
+
+export type TPatientResponse = TPatient & {
+  id: string;
   createdAt: Date;
   updatedAt: Date;
   userId: string;
+};
+
+export type TPatientPayload = TUser & {
+  patient: TPatient;
 };
 
 // Professional
@@ -76,6 +111,15 @@ export type TProfessional = {
 export interface TProfessionalWithAppoitments extends TProfessional {
   appointments: TAppointmentResponse[];
 }
+
+// Owner
+export type TOwner = {
+  id: string;
+  name: string;
+  companyName: string;
+  cnpj: string;
+  userId: string;
+};
 
 // Error
 export interface TError {

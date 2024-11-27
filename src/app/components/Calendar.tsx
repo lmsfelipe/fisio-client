@@ -7,7 +7,7 @@ import { TProfessionalWithAppoitments } from "@/common/types";
 import { AppointmentsColumn } from "./AppointmentsColumn";
 import { formatDateWithTimezone, roundedHours } from "@/common/utils";
 import { findProfessionalsAppointments } from "@/services";
-import { Avatar } from "@nextui-org/react";
+import { Avatar, Tooltip } from "@nextui-org/react";
 import { getHours, getMinutes } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 
@@ -41,7 +41,9 @@ export default function Calendar({
   return (
     <div className="m-4 w-11/12 overflow-x-auto">
       <div className="text-3xl text-white font-extrabold capitalize mb-4">
-        {formatDateWithTimezone(queryDate, "EEEE, d 'de' MMMM")}
+        <h1 className="drop-shadow-lg">
+          {formatDateWithTimezone(queryDate, "EEEE, d 'de' MMMM")}
+        </h1>
       </div>
 
       <div className="inline-flex bg-slate-50 rounded-3xl px-14 py-10">
@@ -52,11 +54,13 @@ export default function Calendar({
 
           <div className="relative">
             <div
-              className="absolute w-screen h-px bg-pink-200 mt-1 z-50 left-10"
+              className="absolute w-screen h-px mt-1 left-10 z-50 border-b-1 border-dashed border-b-slate-300"
               style={{
                 top: `${calculatePercentage > 100 ? 0 : calculatePercentage}%`,
               }}
-            />
+            >
+              {/* <span className="block h-4 w-8 bg-slate-200" /> */}
+            </div>
 
             {roundedHours.map((hour) => (
               <div
@@ -64,7 +68,7 @@ export default function Calendar({
                 className="text-sm text-slate-800 h-32 w-5 relative"
               >
                 <div
-                  className="clalendar-hour absolute"
+                  className="clalendar-hour absolute z-10"
                   style={{ bottom: "90%" }}
                 >
                   {hour.split(":")[0]}h
@@ -80,7 +84,9 @@ export default function Calendar({
               (professional: TProfessionalWithAppoitments) => (
                 <div key={professional.id}>
                   <div className="mb-8 flex justify-center uppercase">
-                    <Avatar color="default" name={professional.name} />
+                    <Tooltip showArrow content={professional.name}>
+                      <Avatar color="default" name={professional.name} />
+                    </Tooltip>
                   </div>
 
                   <AppointmentsColumn

@@ -2,7 +2,6 @@
 
 import * as z from "zod";
 import { addMinutes, differenceInMinutes } from "date-fns";
-import { useState } from "react";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,6 +10,7 @@ import { getLocalTimeZone, parseDate, today } from "@internationalized/date";
 import {
   Autocomplete,
   AutocompleteItem,
+  Button,
   DatePicker,
   Select,
   SelectItem,
@@ -47,7 +47,6 @@ type TAppointmentsInputs = z.infer<typeof createAppointmentSchema>;
  * Component initiation
  */
 export default function AppointmentModal() {
-  const [hasError, setHasError] = useState(false);
   const queryClient = useQueryClient();
 
   /**
@@ -164,34 +163,6 @@ export default function AppointmentModal() {
       <div className="modal-box">
         <h3 className="text-2xl font-extrabold mb-5">Agendamento</h3>
 
-        {hasError && (
-          <div role="alert" className="alert alert-error mb-4">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6 shrink-0 stroke-current"
-              fill="none"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-
-            <span>Não foi possível criar o agendamento.</span>
-
-            <button
-              onClick={() => setHasError(false)}
-              type="button"
-              className="btn btn-sm btn-circle btn-ghost right-2 top-2"
-            >
-              ✕
-            </button>
-          </div>
-        )}
-
         <form method="dialog" onSubmit={handleSubmit(onSubmit)}>
           <button
             onClick={closeModal}
@@ -257,6 +228,7 @@ export default function AppointmentModal() {
             </div>
 
             <div className="flex gap-2">
+              {/* TODO: Componentize this input  */}
               <Controller
                 name="patientId"
                 control={control}
@@ -311,9 +283,9 @@ export default function AppointmentModal() {
               />
             </div>
 
-            <button type="submit" className="btn btn-primary mt-2">
+            <Button type="submit" color="secondary">
               {appointmentQuery?.isEdit ? "Editar" : "Criar"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>

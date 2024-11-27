@@ -7,9 +7,9 @@ import { Button, Input } from "@nextui-org/react";
 import { z } from "zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { login } from "@/services";
+import Cookies from "js-cookie";
 
-import { setCookieAction } from "../actions";
+import { findOwner, login } from "@/services";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -26,15 +26,19 @@ export default function Login() {
   const {
     register,
     handleSubmit,
-    formState: { errors }, // TODO: validade errors
+    // formState: { errors },
   } = useForm<TLoginInputs>({
     resolver: zodResolver(loginSchema),
   });
 
   const onSubmit: SubmitHandler<TLoginInputs> = async (data) => {
     try {
-      const resp = await login(data);
-      setCookieAction("jwt-token", resp.token);
+      const loginResp = await login(data);
+      Cookies.set("jwt-token", loginResp.token);
+
+      const ownerResp = await findOwner();
+      Cookies.set("owner-id", ownerResp.id);
+
       router.push("/");
     } catch (error) {
       // TODO: validade errors
@@ -78,7 +82,7 @@ export default function Login() {
             type={isVisible ? "text" : "password"}
           />
 
-          <Button type="submit" size="lg" className="w-full">
+          <Button type="submit" size="lg" className="w-full" color="secondary">
             Entrar
           </Button>
         </form>
