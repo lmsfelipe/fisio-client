@@ -4,7 +4,8 @@ import {
   TOwner,
   TPatientPayload,
   TPatientResponse,
-  TProfessional,
+  TProfessionalPayload,
+  TProfessionalResponse,
   TProfessionalWithAppoitments,
   TUser,
 } from "@/common/types";
@@ -30,8 +31,10 @@ export function findPatients(id: string): Promise<TPatientResponse[]> {
   return request<TPatientResponse[]>(`find-patients/${id}`);
 }
 
-export function findProfessionals(id: string): Promise<TProfessional[]> {
-  return request<TProfessional[]>(`find-professionals/${id}`);
+export function findProfessionals(
+  id: string
+): Promise<TProfessionalResponse[]> {
+  return request<TProfessionalResponse[]>(`find-professionals/${id}`);
 }
 
 export function createAppointment(
@@ -42,8 +45,14 @@ export function createAppointment(
 
 export function createPatient(
   payload: TPatientPayload
-): Promise<{ success: boolean; data: TPatientResponse }> {
+): Promise<{ success: boolean }> {
   return request("create-patient", { method: "POST" }, payload);
+}
+
+export function createProfessional(
+  payload: TProfessionalPayload
+): Promise<{ success: boolean }> {
+  return request("create-professional", { method: "POST" }, payload);
 }
 
 export function editAppointment(

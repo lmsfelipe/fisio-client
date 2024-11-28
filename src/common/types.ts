@@ -98,7 +98,13 @@ export type TPatientPayload = TUser & {
 };
 
 // Professional
-export type TProfessional = {
+export interface TProfessional {
+  name: string;
+  ownerId?: string;
+  specialization: "phisio" | "speech" | "secretary";
+}
+
+export type TProfessionalResponse = {
   id: string;
   name: string;
   ownerId: string;
@@ -108,9 +114,13 @@ export type TProfessional = {
   userId: string;
 };
 
-export interface TProfessionalWithAppoitments extends TProfessional {
+export interface TProfessionalWithAppoitments extends TProfessionalResponse {
   appointments: TAppointmentResponse[];
 }
+
+export type TProfessionalPayload = TUser & {
+  professional: TProfessional;
+};
 
 // Owner
 export type TOwner = {

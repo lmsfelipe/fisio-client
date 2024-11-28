@@ -1,25 +1,18 @@
 "use client";
 
-import {
-  Button,
-  Divider,
-  Input,
-  Select,
-  SelectItem,
-  Textarea,
-} from "@nextui-org/react";
+import { Button, Divider, Input, Select, SelectItem } from "@nextui-org/react";
 import { toast } from "react-toastify";
 import { z } from "zod";
 import { parse } from "date-fns";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { createPatient } from "@/services";
+import { createProfessional } from "@/services";
 import { getCookieAction } from "../actions";
 import { InputNumberMask } from "../components/InputNumberMask";
-import { patientPayloadSchema } from "@/common/formSchemas";
+import { professionalPayloadSchema } from "@/common/formSchemas";
 
-type TCreatePatientInputs = z.infer<typeof patientPayloadSchema>;
+type TCreateProfessionalInputs = z.infer<typeof professionalPayloadSchema>;
 
 export default function CreatePatient() {
   const {
@@ -28,8 +21,8 @@ export default function CreatePatient() {
     control,
     reset,
     formState: { errors }, // TODO: validade errors
-  } = useForm<TCreatePatientInputs>({
-    resolver: zodResolver(patientPayloadSchema),
+  } = useForm<TCreateProfessionalInputs>({
+    resolver: zodResolver(professionalPayloadSchema),
     defaultValues: {
       birthday: "",
       cpf: "",
@@ -40,13 +33,14 @@ export default function CreatePatient() {
 
   const clearNonNumeric = (str: string) => str.replace(/\D/g, "");
 
-  const onSubmit: SubmitHandler<TCreatePatientInputs> = async (data) => {
+  const onSubmit: SubmitHandler<TCreateProfessionalInputs> = async (data) => {
     const cookie = await getCookieAction("owner-id");
     const ownerId = cookie?.value;
     console.log("ownerID", ownerId);
 
     if (!ownerId) {
       console.log("Error getting cookie");
+      return toast.error("Erro! Por favor valide os campos");
     }
 
     const formattedPayload = {
@@ -55,8 +49,8 @@ export default function CreatePatient() {
       phone: clearNonNumeric(data.phone),
       birthday: parse(data.birthday, "dd/MM/yyyy", new Date()),
       password: "password",
-      patient: {
-        ...data.patient,
+      professional: {
+        ...data.professional,
         ownerId,
       },
       address: {
@@ -66,8 +60,8 @@ export default function CreatePatient() {
     };
 
     try {
-      await createPatient(formattedPayload);
-      toast.success("Paciente criado com sucesso!");
+      await createProfessional(formattedPayload);
+      toast.success("Profissional criado com sucesso!");
       reset();
     } catch (error) {
       toast.error("Erro! Por favor valide os campos");
@@ -76,11 +70,11 @@ export default function CreatePatient() {
   };
 
   const rowClasses = "flex gap-x-4 gap-y-3 mb-4";
-
+  console.log("errors", errors);
   return (
     <div className="py-10">
       <h1 className="text-5xl font-bold text-center mb-10 text-white">
-        Cadastrar Paciente
+        Cadastrar Profissional
       </h1>
 
       <div className="w-2/3 mx-auto bg-slate-200 rounded-3xl px-10 py-10">
@@ -142,28 +136,26 @@ export default function CreatePatient() {
           <Divider className="my-8" />
 
           <h2 className="text-xl font-bold text-slate-800 mb-6">
-            Dados do paciente
+            Dados do profissional
           </h2>
 
           <div className={rowClasses}>
             <Input
-              isInvalid={!!errors.patient?.name}
-              label="Nome do paciente"
-              {...register("patient.name")}
+              isInvalid={!!errors.professional?.name}
+              label="Nome do profissional"
+              {...register("professional.name")}
             />
-            <Input
-              isInvalid={!!errors.patient?.motherName}
-              label="Nome da mãe"
-              {...register("patient.motherName")}
-            />
-            <Input label="Nome do Pai" {...register("patient.fatherName")} />
-          </div>
 
-          <Textarea
-            isInvalid={!!errors.patient?.diagnosis}
-            label="Diagnóstico"
-            {...register("patient.diagnosis")}
-          />
+            <Select
+              label="Especialização"
+              isInvalid={!!errors.professional?.specialization}
+              {...register("professional.specialization")}
+            >
+              <SelectItem key="phisio">Fisioterapia</SelectItem>
+              <SelectItem key="speech">Fonoaudiolodia</SelectItem>
+              <SelectItem key="secretary">Secretária/o</SelectItem>
+            </Select>
+          </div>
 
           <Divider className="my-8" />
 

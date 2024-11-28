@@ -61,6 +61,13 @@ export default function CreatAppointment() {
         >
           Cadastrar paciente
         </Link>
+
+        <Link
+          className="text-white block w-full text-center mt-4"
+          href="/cadastrar-profissional"
+        >
+          Cadastrar profissional
+        </Link>
       </div>
 
       {apptModalOpen && <AppointmentModal />}
