@@ -27,7 +27,7 @@ export default function CreatePatient() {
     handleSubmit,
     control,
     reset,
-    formState: { errors }, // TODO: validade errors
+    formState: { errors },
   } = useForm<TCreatePatientInputs>({
     resolver: zodResolver(patientPayloadSchema),
     defaultValues: {

@@ -20,7 +20,7 @@ export default function CreatePatient() {
     handleSubmit,
     control,
     reset,
-    formState: { errors }, // TODO: validade errors
+    formState: { errors },
   } = useForm<TCreateProfessionalInputs>({
     resolver: zodResolver(professionalPayloadSchema),
     defaultValues: {
@@ -68,7 +68,7 @@ export default function CreatePatient() {
   };
 
   const rowClasses = "flex gap-x-4 gap-y-3 mb-4";
-  console.log("errors", errors);
+
   return (
     <div className="py-10">
       <h1 className="text-5xl font-bold text-center mb-10 text-white">
