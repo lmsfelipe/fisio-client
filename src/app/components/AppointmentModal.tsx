@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useEffect } from "react";
 import * as z from "zod";
 import { addMinutes, differenceInMinutes } from "date-fns";
 import { Controller, SubmitHandler, useForm } from "react-hook-form";
@@ -16,6 +17,8 @@ import {
   SelectItem,
   Textarea,
 } from "@nextui-org/react";
+import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 
 import {
   appointmentDuration,
@@ -57,24 +60,24 @@ export default function AppointmentModal() {
 
   const [, setApptModalOpen] = useQueryState("appt-modal", parseAsBoolean);
 
-  function closeModal() {
+  const closeModalCallBack = useCallback(() => {
     setApptModalOpen(null);
     setAppointmentQuery(null);
-  }
+  }, [setApptModalOpen, setAppointmentQuery]);
 
   /**
    * API request
    */
-  const ownerId = "e30c0aac-9321-448f-80c3-e246d64aaab3"; // TODO: get it form service
+  const ownerId = Cookies.get("owner-id");
 
-  const { data: patients } = useQuery({
+  const { data: patients, error: patientsError } = useQuery({
     queryKey: ["patients", ownerId],
-    queryFn: () => findPatients(ownerId),
+    queryFn: () => (ownerId ? findPatients(ownerId) : null),
   });
 
-  const { data: professionals } = useQuery({
+  const { data: professionals, error: professionalsError } = useQuery({
     queryKey: ["professionals", ownerId],
-    queryFn: () => findProfessionals(ownerId),
+    queryFn: () => (ownerId ? findProfessionals(ownerId) : null),
   });
 
   const appointmentMutation = useMutation({
@@ -82,8 +85,11 @@ export default function AppointmentModal() {
     onSuccess: (response) => {
       if (response.success) {
         queryClient.invalidateQueries({ queryKey: ["appointmentsData"] });
-        closeModal();
+        closeModalCallBack();
       }
+    },
+    onError: () => {
+      toast.error("Erro! Não foi possível criar o agendamento");
     },
   });
 
@@ -115,7 +121,7 @@ export default function AppointmentModal() {
     register,
     handleSubmit,
     control,
-    // formState: { errors }, TODO: validade errors
+    formState: { errors },
   } = useForm<TAppointmentsInputs>({
     resolver: zodResolver(createAppointmentSchema),
     defaultValues,
@@ -155,8 +161,16 @@ export default function AppointmentModal() {
     appointmentMutation.mutate(payload);
   };
 
-  if (!professionals?.length || !patients?.length)
-    return <h1>Data não carregada</h1>;
+  useEffect(() => {
+    if (patientsError || professionalsError) {
+      toast.error("Erro ao carregar lista de pacientes e profissionais");
+      return closeModalCallBack();
+    }
+  }, [patientsError, professionalsError, closeModalCallBack]);
+
+  if (!professionals?.length || !patients?.length) {
+    return null;
+  }
 
   return (
     <div className={`modal modal-open`}>
@@ -165,7 +179,7 @@ export default function AppointmentModal() {
 
         <form method="dialog" onSubmit={handleSubmit(onSubmit)}>
           <button
-            onClick={closeModal}
+            onClick={closeModalCallBack}
             type="button"
             className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
           >
@@ -180,6 +194,7 @@ export default function AppointmentModal() {
                 render={({ field }) => (
                   <DatePicker
                     {...field}
+                    isInvalid={!!errors.dateStart}
                     minValue={today(getLocalTimeZone())}
                     label="Quando?"
                     onChange={(date) => field.onChange(date)}
@@ -192,6 +207,7 @@ export default function AppointmentModal() {
                 className="max-w-xs"
                 placeholder="Digite ou selecione"
                 validationBehavior="native"
+                isInvalid={!!errors.time}
                 {...register("time")}
               >
                 {quarterHours.map((hour) => (
@@ -207,6 +223,7 @@ export default function AppointmentModal() {
                 label="Duração"
                 placeholder="Selecione"
                 className="max-w-xs"
+                isInvalid={!!errors.duration}
                 {...register("duration")}
               >
                 {appointmentDuration.map((duration) => (
@@ -220,6 +237,7 @@ export default function AppointmentModal() {
                 label="Onde?"
                 placeholder="Selecione"
                 className="max-w-xs"
+                isInvalid={!!errors.location}
                 {...register("location")}
               >
                 <SelectItem key="clinic">Clínica</SelectItem>
@@ -240,6 +258,7 @@ export default function AppointmentModal() {
                     validationBehavior="native"
                     onSelectionChange={(selection) => field.onChange(selection)}
                     defaultSelectedKey={defaultValues?.patientId}
+                    isInvalid={!!errors.patientId}
                   >
                     {(patients) => (
                       <AutocompleteItem key={patients.id} value={patients.id}>
@@ -257,6 +276,7 @@ export default function AppointmentModal() {
                   <Autocomplete
                     label="Profissional"
                     defaultItems={professionals}
+                    isInvalid={!!errors.professionalId}
                     placeholder="Digite ou selecione"
                     validationBehavior="native"
                     onSelectionChange={(selection) => field.onChange(selection)}
@@ -279,6 +299,7 @@ export default function AppointmentModal() {
               <Textarea
                 label="Observação"
                 placeholder="Algo a acrescentar?"
+                isInvalid={!!errors.observation}
                 {...register("observation")}
               />
             </div>

@@ -43,10 +43,9 @@ export default function CreatePatient() {
   const onSubmit: SubmitHandler<TCreatePatientInputs> = async (data) => {
     const cookie = await getCookieAction("owner-id");
     const ownerId = cookie?.value;
-    console.log("ownerID", ownerId);
 
     if (!ownerId) {
-      console.log("Error getting cookie");
+      return toast.error("Erro ao receber ownerId");
     }
 
     const formattedPayload = {

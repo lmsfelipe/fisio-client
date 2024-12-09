@@ -10,6 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Cookies from "js-cookie";
 
 import { findOwner, login } from "@/services";
+import { toast } from "react-toastify";
 
 const loginSchema = z.object({
   email: z.string().email(),
@@ -26,7 +27,7 @@ export default function Login() {
   const {
     register,
     handleSubmit,
-    // formState: { errors },
+    formState: { errors },
   } = useForm<TLoginInputs>({
     resolver: zodResolver(loginSchema),
   });
@@ -41,8 +42,7 @@ export default function Login() {
 
       router.push("/");
     } catch (error) {
-      // TODO: validade errors
-      console.log("error", error);
+      toast.error("Usuário não encontrado. Por favor, valide os dados");
     }
   };
 
@@ -57,6 +57,7 @@ export default function Login() {
             type="email"
             label="E-mail"
             placeholder="Qual seu e-mail?"
+            isInvalid={!!errors.email}
             {...register("email")}
           />
 
