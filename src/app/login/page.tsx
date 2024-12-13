@@ -9,7 +9,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Cookies from "js-cookie";
 
-import { findOwner, login } from "@/services";
+import { login } from "@/services";
 import { toast } from "react-toastify";
 
 const loginSchema = z.object({
@@ -36,9 +36,7 @@ export default function Login() {
     try {
       const loginResp = await login(data);
       Cookies.set("jwt-token", loginResp.token);
-
-      const ownerResp = await findOwner();
-      Cookies.set("owner-id", ownerResp.id);
+      Cookies.set("owner-id", loginResp.ownerId);
 
       router.push("/");
     } catch (error) {

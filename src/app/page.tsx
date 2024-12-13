@@ -1,4 +1,4 @@
-import Calendar from "./components/Calendar";
+import CalendarContent from "./components/CalendarContent";
 import CreatAppointment from "./components/CreateAppointment";
 // import { Suspense } from "react";
 import UserProfile from "./components/UserProfile";
@@ -17,7 +17,7 @@ export default async function Home({
         <CreatAppointment />
       </div>
 
-      <Calendar dateQuery={queryDate || undefined} />
+      <CalendarContent dateQuery={queryDate || undefined} />
       {/* <Suspense key={queryDate}>
       </Suspense> */}
     </div>

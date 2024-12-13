@@ -70,12 +70,20 @@ export default function AppointmentModal() {
    */
   const ownerId = Cookies.get("owner-id");
 
-  const { data: patients, error: patientsError } = useQuery({
+  const {
+    data: patients,
+    error: patientsError,
+    isLoading: patientsLoading,
+  } = useQuery({
     queryKey: ["patients", ownerId],
     queryFn: () => (ownerId ? findPatients(ownerId) : null),
   });
 
-  const { data: professionals, error: professionalsError } = useQuery({
+  const {
+    data: professionals,
+    error: professionalsError,
+    isLoading: professionalsLoading,
+  } = useQuery({
     queryKey: ["professionals", ownerId],
     queryFn: () => (ownerId ? findProfessionals(ownerId) : null),
   });
@@ -162,13 +170,35 @@ export default function AppointmentModal() {
   };
 
   useEffect(() => {
+    // TODO: Improve this validation
     if (patientsError || professionalsError) {
       toast.error("Erro ao carregar lista de pacientes e profissionais");
       return closeModalCallBack();
     }
-  }, [patientsError, professionalsError, closeModalCallBack]);
 
-  if (!professionals?.length || !patients?.length) {
+    if (
+      !patientsLoading &&
+      !professionalsLoading &&
+      (!professionals?.length || !patients?.length)
+    ) {
+      toast.warning("Nenhum paciente ou profissional cadastrado");
+      return closeModalCallBack();
+    }
+  }, [
+    patientsError,
+    professionalsError,
+    professionals,
+    patients,
+    patientsLoading,
+    professionalsLoading,
+    closeModalCallBack,
+  ]);
+
+  if (patientsLoading || professionalsLoading) {
+    return null;
+  }
+
+  if (!patients?.length || !professionals?.length) {
     return null;
   }
 

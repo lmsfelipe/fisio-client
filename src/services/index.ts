@@ -75,6 +75,6 @@ export function editAppointmentStatus(payload: {
 export function login(payload: {
   email: string;
   password: string;
-}): Promise<{ token: string }> {
+}): Promise<{ token: string; ownerId: string }> {
   return request("login", { method: "POST" }, payload);
 }
