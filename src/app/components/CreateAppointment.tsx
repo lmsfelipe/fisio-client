@@ -1,13 +1,13 @@
 "use client";
 
-import { Button, Calendar } from "@nextui-org/react";
+import { Calendar } from "@nextui-org/react";
 import { DateValue } from "@react-types/calendar";
 import { usePathname, useRouter } from "next/navigation";
 import { getLocalTimeZone, parseDate, today } from "@internationalized/date";
 import { parseAsBoolean, parseAsString, useQueryState } from "nuqs";
 
 import AppointmentModal from "./AppointmentModal";
-import Link from "next/link";
+import CreateAppointmentButton from "./CreateAppointmentButton";
 
 export default function CreatAppointment() {
   const path = usePathname();
@@ -46,28 +46,7 @@ export default function CreatAppointment() {
       </div>
 
       <div className="py-6 w-full">
-        <Button
-          onClick={() => setApptModalOpen(true)}
-          size="lg"
-          className="bg-white text-primary"
-          fullWidth
-        >
-          Criar Agendamento
-        </Button>
-
-        <Link
-          className="text-white block w-full text-center mt-4"
-          href="/cadastrar-paciente"
-        >
-          Cadastrar paciente
-        </Link>
-
-        <Link
-          className="text-white block w-full text-center mt-4"
-          href="/cadastrar-profissional"
-        >
-          Cadastrar profissional
-        </Link>
+        <CreateAppointmentButton openModal={setApptModalOpen} />
       </div>
 
       {apptModalOpen && <AppointmentModal />}
