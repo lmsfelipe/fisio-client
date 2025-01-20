@@ -9,7 +9,6 @@ export function LogoutButton() {
 
   function handleLogoutClick() {
     Cookies.remove("jwt-token");
-    Cookies.remove("owner-id");
     router.push("/login");
   }
 

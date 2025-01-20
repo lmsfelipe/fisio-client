@@ -15,7 +15,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { createPatient } from "@/services";
-import { getCookieAction } from "../actions";
 import { InputNumberMask } from "../components/InputNumberMask";
 import { patientPayloadSchema } from "@/common/formSchemas";
 
@@ -41,23 +40,13 @@ export default function CreatePatient() {
   const clearNonNumeric = (str: string) => str.replace(/\D/g, "");
 
   const onSubmit: SubmitHandler<TCreatePatientInputs> = async (data) => {
-    const cookie = await getCookieAction("owner-id");
-    const ownerId = cookie?.value;
-
-    if (!ownerId) {
-      return toast.error("Erro ao receber ownerId");
-    }
-
     const formattedPayload = {
       ...data,
       cpf: clearNonNumeric(data.cpf),
       phone: clearNonNumeric(data.phone),
       birthday: parse(data.birthday, "dd/MM/yyyy", new Date()),
       password: "password",
-      patient: {
-        ...data.patient,
-        ownerId,
-      },
+      patient: { ...data.patient },
       address: {
         ...data.address,
         zipCode: clearNonNumeric(data.address.zipCode),

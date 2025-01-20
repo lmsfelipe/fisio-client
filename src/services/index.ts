@@ -1,7 +1,6 @@
 import {
   StatusEnum,
   TAppointment,
-  TOwner,
   TPatientPayload,
   TPatientResponse,
   TProfessionalPayload,
@@ -23,18 +22,12 @@ export function findUser(): Promise<TUser> {
   return request<TUser>("find-user");
 }
 
-export function findOwner(): Promise<TOwner> {
-  return request<TOwner>("find-owner");
+export function findPatients(): Promise<TPatientResponse[]> {
+  return request<TPatientResponse[]>("find-patients");
 }
 
-export function findPatients(id: string): Promise<TPatientResponse[]> {
-  return request<TPatientResponse[]>(`find-patients/${id}`);
-}
-
-export function findProfessionals(
-  id: string
-): Promise<TProfessionalResponse[]> {
-  return request<TProfessionalResponse[]>(`find-professionals/${id}`);
+export function findProfessionals(): Promise<TProfessionalResponse[]> {
+  return request<TProfessionalResponse[]>("find-professionals");
 }
 
 export function createAppointment(
@@ -75,6 +68,6 @@ export function editAppointmentStatus(payload: {
 export function login(payload: {
   email: string;
   password: string;
-}): Promise<{ token: string; ownerId: string }> {
+}): Promise<{ token: string; id: string; companyId: string }> {
   return request("login", { method: "POST" }, payload);
 }

@@ -3,14 +3,6 @@
 import { formatDateWithTimezone } from "@/common/utils";
 import { CalendarTable } from "./CalendarTable";
 
-// async function getData(dateQuery: string) {
-//   const res = await findProfessionalsAppointments(dateQuery);
-
-//   if (!res?.length) throw new Error("Owner not found");
-
-//   return res;
-// }
-
 export default function Calendar({
   dateQuery,
 }: {
@@ -18,8 +10,6 @@ export default function Calendar({
 }) {
   const today = formatDateWithTimezone(new Date(), "yyyy-MM-dd");
   const queryDate = dateQuery || today;
-
-  // const data = await getData(queryDate);
 
   return (
     <div className="m-4 w-11/12 overflow-x-auto">

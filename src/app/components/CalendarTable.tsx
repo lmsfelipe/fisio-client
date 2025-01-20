@@ -1,6 +1,6 @@
 import { CalendarDaysIcon } from "@heroicons/react/24/solid";
 import { v4 as uuidv4 } from "uuid";
-import { Avatar, Tooltip } from "@nextui-org/react";
+import { Avatar, Spinner, Tooltip } from "@nextui-org/react";
 import { getHours, getMinutes } from "date-fns";
 import { useQuery } from "@tanstack/react-query";
 
@@ -28,7 +28,12 @@ export function CalendarTable() {
   const currentTime = getHours(now) * 60 + getMinutes(now) - 420;
   const calculatePercentage = (currentTime * 100) / 780;
 
-  if (isLoading) return <div>Carregando</div>;
+  if (isLoading)
+    return (
+      <div>
+        <Spinner color="default" size="lg" />
+      </div>
+    );
   if (isError)
     return <div>Houve um erro ao carregar a lista de profissionais</div>;
   if (!appointmentsData?.length)

@@ -17,7 +17,6 @@ import {
   SelectItem,
   Textarea,
 } from "@nextui-org/react";
-import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 
 import {
@@ -68,15 +67,13 @@ export default function AppointmentModal() {
   /**
    * API request
    */
-  const ownerId = Cookies.get("owner-id");
-
   const {
     data: patients,
     error: patientsError,
     isLoading: patientsLoading,
   } = useQuery({
-    queryKey: ["patients", ownerId],
-    queryFn: () => (ownerId ? findPatients(ownerId) : null),
+    queryKey: ["patients"],
+    queryFn: () => findPatients(),
   });
 
   const {
@@ -84,8 +81,8 @@ export default function AppointmentModal() {
     error: professionalsError,
     isLoading: professionalsLoading,
   } = useQuery({
-    queryKey: ["professionals", ownerId],
-    queryFn: () => (ownerId ? findProfessionals(ownerId) : null),
+    queryKey: ["professionals"],
+    queryFn: () => findProfessionals(),
   });
 
   const appointmentMutation = useMutation({

@@ -8,7 +8,6 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 import { createProfessional } from "@/services";
-import { getCookieAction } from "../actions";
 import { InputNumberMask } from "../components/InputNumberMask";
 import { professionalPayloadSchema } from "@/common/formSchemas";
 
@@ -34,13 +33,6 @@ export default function CreatePatient() {
   const clearNonNumeric = (str: string) => str.replace(/\D/g, "");
 
   const onSubmit: SubmitHandler<TCreateProfessionalInputs> = async (data) => {
-    const cookie = await getCookieAction("owner-id");
-    const ownerId = cookie?.value;
-
-    if (!ownerId) {
-      return toast.error("Erro ao receber ownerId");
-    }
-
     const formattedPayload = {
       ...data,
       cpf: clearNonNumeric(data.cpf),
@@ -49,7 +41,6 @@ export default function CreatePatient() {
       password: "password",
       professional: {
         ...data.professional,
-        ownerId,
       },
       address: {
         ...data.address,
@@ -78,7 +69,7 @@ export default function CreatePatient() {
       <div className="w-2/3 mx-auto bg-slate-200 rounded-3xl px-10 py-10">
         <form onSubmit={handleSubmit(onSubmit)}>
           <h2 className="text-xl font-bold text-slate-800 mb-6">
-            Dados do responsável
+            Dados do usuário
           </h2>
 
           <div className={rowClasses}>
@@ -128,20 +119,6 @@ export default function CreatePatient() {
               inputName="phone"
               label="Telefone"
               mask="(##) #####-####"
-            />
-          </div>
-
-          <Divider className="my-8" />
-
-          <h2 className="text-xl font-bold text-slate-800 mb-6">
-            Dados do profissional
-          </h2>
-
-          <div className={rowClasses}>
-            <Input
-              isInvalid={!!errors.professional?.name}
-              label="Nome do profissional"
-              {...register("professional.name")}
             />
 
             <Select

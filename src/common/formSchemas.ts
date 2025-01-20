@@ -33,7 +33,6 @@ export const patientPayloadSchema = userSchema.extend({
 });
 
 const professionalSchema = z.object({
-  name: z.string().min(5),
   specialization: z.enum(["phisio", "speech", "secretary"]),
 }) satisfies z.ZodType<TProfessional>;
 

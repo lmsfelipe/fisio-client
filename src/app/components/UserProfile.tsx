@@ -5,13 +5,15 @@ import { LogoutButton } from "./LogoutButton";
 async function getData() {
   const res = await findUser();
 
-  if (!res?.id) throw new Error("Owner not found");
+  if (!res?.id) throw new Error("User not found");
 
   return res;
 }
 
 export default async function UserProfile() {
   const resp = await getData();
+
+  if (!resp) return "Usuário não encontrado";
 
   return (
     <div className="bg-white rounded-3xl bg-opacity-15 px-4 py-2 font-bo relative">

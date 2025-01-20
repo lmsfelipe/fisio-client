@@ -19,6 +19,7 @@ export enum PermissionEnum {
 
 export type TUser = {
   id?: string;
+  companyId?: string;
   name: string;
   email: string;
   password: string;
@@ -33,6 +34,7 @@ export type TUser = {
 
 // Address
 export interface IAddress {
+  companyId?: string;
   street: string;
   number: string;
   neighborhood: string;
@@ -49,6 +51,7 @@ export enum StatusEnum {
 }
 
 export type TAppointment = {
+  companyId?: string;
   dateStart: string;
   dateEnd: string;
   location: "clinic" | "home";
@@ -79,7 +82,7 @@ export interface TAppointmentQuery extends TAppointmentResponse {
 
 // Patient
 export type TPatient = {
-  ownerId?: string;
+  companyId?: string;
   name: string;
   motherName: string;
   fatherName?: string;
@@ -99,15 +102,15 @@ export type TPatientPayload = TUser & {
 
 // Professional
 export interface TProfessional {
-  name: string;
-  ownerId?: string;
+  companyId?: string;
+  name?: string;
   specialization: "phisio" | "speech" | "secretary";
 }
 
 export type TProfessionalResponse = {
   id: string;
   name: string;
-  ownerId: string;
+  companyId: string;
   specialization: string;
   createdAt: Date;
   updatedAt: Date;
@@ -122,13 +125,12 @@ export type TProfessionalPayload = TUser & {
   professional: TProfessional;
 };
 
-// Owner
-export type TOwner = {
+// Company
+export type TCompany = {
   id: string;
-  name: string;
   companyName: string;
   cnpj: string;
-  userId: string;
+  logo: File;
 };
 
 // Error

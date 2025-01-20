@@ -36,7 +36,6 @@ export default function Login() {
     try {
       const loginResp = await login(data);
       Cookies.set("jwt-token", loginResp.token);
-      Cookies.set("owner-id", loginResp.ownerId);
 
       router.push("/");
     } catch (error) {
