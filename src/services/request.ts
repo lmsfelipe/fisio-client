@@ -1,6 +1,6 @@
 import { getCookieAction } from "@/app/actions";
 
-const baseURL = "http://localhost:8000";
+const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
 function getCookie(key: string) {
   var b = document.cookie.match("(^|;)\\s*" + key + "\\s*=\\s*([^;]+)");
